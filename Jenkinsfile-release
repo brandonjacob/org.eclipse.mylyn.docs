@@ -72,20 +72,20 @@ pipeline {
 		}
 		stage('Tag Release') {
 			steps {
-				sshagent (['git.eclipse.org-bot-ssh']) {
+				withCredentials([usernameColonPassword(credentialsId: 'github-brandon-wikitext-release-credentials', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
 					sh '''
 						git config --global user.email docs-bot@eclipse.org
-						mvn -B -V -e -Ptag-release -DpushChanges="${PERFORM_RELEASE}" -Dtycho.mode=maven build-helper:parse-version scm:tag -pl .
+						mvn -B -V -e -Ptag-release -DpushChanges="${PERFORM_RELEASE}" -Dtycho.mode=maven -Dusername="${USERNAME}" -Dpassword="${PASSWORD}" build-helper:parse-version scm:tag -pl .
 					'''
 				}
 			}
 		}
 		stage('Bump Development Version') {
 			steps {
-				sshagent (['git.eclipse.org-bot-ssh']) {
+				withCredentials([usernameColonPassword(credentialsId: 'github-brandon-wikitext-release-credentials', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
 					sh '''
 						git config --global user.email docs-bot@eclipse.org
-						mvn -B -V -e -Pcommit-version-update -DpushChanges="${PERFORM_RELEASE}" -Dtycho.mode=maven build-helper:parse-version versions:set-property antrun:run scm:checkin -pl .
+						mvn -B -V -e -Pcommit-version-update -DpushChanges="${PERFORM_RELEASE}" -Dtycho.mode=maven -Dusername="${USERNAME}" -Dpassword="${PASSWORD}" build-helper:parse-version versions:set-property antrun:run scm:checkin -pl .
 					'''
 				}
 			}
