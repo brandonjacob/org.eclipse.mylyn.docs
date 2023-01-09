@@ -20,7 +20,7 @@ pipeline {
 	stages {
 		stage('Tag Release') {
 			steps {
-				withCredentials([usernameColonPassword(credentialsId: 'github-brandon-wikitext-release-credentials', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+				withCredentials([usernamePassword(credentialsId: 'github-bot-brandon', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
 					sh '''
 						git config --global user.email docs-bot@eclipse.org
 						mvn -B -V -e -Ptag-release -DpushChanges="${PERFORM_RELEASE}" -Dtycho.mode=maven -Dusername="${USERNAME}" -Dpassword="${PASSWORD}" build-helper:parse-version scm:tag -pl .
@@ -30,7 +30,7 @@ pipeline {
 		}
 		stage('Bump Development Version') {
 			steps {
-				withCredentials([usernameColonPassword(credentialsId: 'github-brandon-wikitext-release-credentials', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+				withCredentials([usernamePassword(credentialsId: 'github-bot-brandon', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
 					sh '''
 						git config --global user.email docs-bot@eclipse.org
 						mvn -B -V -e -Pcommit-version-update -DpushChanges="${PERFORM_RELEASE}" -Dtycho.mode=maven -Dusername="${USERNAME}" -Dpassword="${PASSWORD}" build-helper:parse-version versions:set-property antrun:run scm:checkin -pl .
